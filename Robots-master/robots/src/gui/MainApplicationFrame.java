@@ -129,7 +129,6 @@ public class MainApplicationFrame extends JFrame
             testMenu.add(addLogMessageItem);
         }
 
-        // Создаем пункт меню "Выход"
         JMenu closeMenu = new JMenu("Меню");
         closeMenu.add(new JMenuItem("Выход")).addActionListener(new ActionListener() {
             @Override
@@ -160,6 +159,10 @@ public class MainApplicationFrame extends JFrame
         }
     }
 
+
+    /**
+     * Функция для закрытия приложения. Выводится окно подтверждения выхода
+     */
     protected void closeWindow(){
         int option = JOptionPane.showConfirmDialog(null, "Выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
