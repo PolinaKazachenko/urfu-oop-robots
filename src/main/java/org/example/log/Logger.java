@@ -1,4 +1,4 @@
-package log;
+package org.example.log;
 
 public final class Logger
 {

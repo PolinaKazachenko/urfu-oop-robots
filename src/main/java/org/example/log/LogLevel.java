@@ -1,4 +1,4 @@
-package log;
+package org.example.log;
 
 public enum LogLevel
 {
