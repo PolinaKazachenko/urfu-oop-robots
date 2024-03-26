@@ -1,5 +1,6 @@
 package org.example.gui;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,14 +32,14 @@ public class WorkingWithFile {
     /**
      * Чтение из файла размеров окна
      */
-    protected Map<String, String> readCondition(String nameOfWindow){
+    protected Map<String, String> readCondition(JComponent window){
         File file = new File(pathName);
         Map<String, String> map = new HashMap<>();
         try (Scanner scanner = new Scanner(file)){
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] value = line.split(" ");
-                if (Objects.equals(value[0].split("\\.")[0], nameOfWindow))
+                if (Objects.equals(value[0].split("\\.")[0], window.getName()))
                     map.put(value[0], value[1]);
             }
         } catch (Exception ex) {
