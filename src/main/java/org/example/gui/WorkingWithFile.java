@@ -9,11 +9,12 @@ import java.util.*;
  * Класс-"сущность" для работы с файлом
  */
 public class WorkingWithFile {
+    private final String pathName  = System.getProperty("user.home") + "/window_condition.txt";
     /**
      * Запись в файл размеров окна
      */
     protected void writeCondition(Map<String, String> map, Boolean newRecord){
-        File file = new File(System.getProperty("user.home") + "/window_condition.txt");
+        File file = new File(pathName);
         try(FileWriter writer = new FileWriter(file, !newRecord))
         {
             for (String parametr: map.keySet()){
@@ -31,18 +32,15 @@ public class WorkingWithFile {
      * Чтение из файла размеров окна
      */
     protected Map<String, String> readCondition(String nameOfWindow){
-        String homeDirectory = System.getProperty("user.home");
-        File file = new File(homeDirectory + "/window_condition.txt");
+        File file = new File(pathName);
         Map<String, String> map = new HashMap<>();
-        try {
-            Scanner scanner = new Scanner(file);
+        try (Scanner scanner = new Scanner(file)){
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] value = line.split(" ");
                 if (Objects.equals(value[0].split("\\.")[0], nameOfWindow))
                     map.put(value[0], value[1]);
             }
-            scanner.close();
         } catch (Exception ex) {
             System.out.println("Файл не найден: " + file.getName());
         }
