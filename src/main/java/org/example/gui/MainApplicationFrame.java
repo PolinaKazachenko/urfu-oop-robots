@@ -3,46 +3,63 @@ package org.example.gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 
 import org.example.log.Logger;
 
+import static javax.swing.text.StyleConstants.setIcon;
+
 
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    
-    public MainApplicationFrame() {
+
+    public MainApplicationFrame() throws PropertyVetoException {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
-        int inset = 50;        
+        int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
-            screenSize.width  - inset*2,
-            screenSize.height - inset*2);
+                screenSize.width  - inset*2,
+                screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-        
-        
+
+        WorkingWithFile workingWithFile = new WorkingWithFile();
         LogWindow logWindow = createLogWindow();
+        String[] windowInformation = logWindow.recover("log", workingWithFile.readCondition("log"));
+        logWindow.setSize(Integer.parseInt(windowInformation[0]), Integer.parseInt(windowInformation[1]));
+        logWindow.setIcon(Boolean.parseBoolean(windowInformation[2]));
+        logWindow.setLocation(Integer.parseInt(windowInformation[3]), Integer.parseInt(windowInformation[4]));
         addWindow(logWindow);
 
+
         GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
+        windowInformation = gameWindow.recover("game", workingWithFile.readCondition("game"));
+        gameWindow.setSize(Integer.parseInt(windowInformation[0]), Integer.parseInt(windowInformation[1]));
+        gameWindow.setIcon(Boolean.parseBoolean(windowInformation[2]));
+        gameWindow.setLocation(Integer.parseInt(windowInformation[3]), Integer.parseInt(windowInformation[4]));
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                workingWithFile.writeCondition(logWindow.save("log", logWindow.isIcon(), logWindow.getX(), logWindow.getY()), true);
+                workingWithFile.writeCondition(gameWindow.save("game", gameWindow.isIcon(), gameWindow.getX(), gameWindow.getY()), false);
                 closeWindow();
             }
         });
     }
-    
+
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
@@ -53,13 +70,13 @@ public class MainApplicationFrame extends JFrame
         Logger.debug("Протокол работает");
         return logWindow;
     }
-    
+
     protected void addWindow(JInternalFrame frame)
     {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-    
+
 //    protected JMenuBar createMenuBar() {
 //        JMenuBar menuBar = new JMenuBar();
 // 
@@ -88,16 +105,16 @@ public class MainApplicationFrame extends JFrame
 // 
 //        return menuBar;
 //    }
-    
+
     private JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
-        
+
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
                 "Управление режимом отображения приложения");
-        
+
         {
             JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
             systemLookAndFeel.addActionListener((event) -> {
@@ -120,7 +137,7 @@ public class MainApplicationFrame extends JFrame
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
-        
+
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
             addLogMessageItem.addActionListener((event) -> {
@@ -144,7 +161,7 @@ public class MainApplicationFrame extends JFrame
 
         return menuBar;
     }
-    
+
     private void setLookAndFeel(String className)
     {
         try
@@ -153,7 +170,7 @@ public class MainApplicationFrame extends JFrame
             SwingUtilities.updateComponentTreeUI(this);
         }
         catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException | UnsupportedLookAndFeelException e)
+               | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             // just ignore
         }
