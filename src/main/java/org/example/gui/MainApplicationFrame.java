@@ -6,8 +6,7 @@ import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -19,6 +18,8 @@ import static javax.swing.text.StyleConstants.setIcon;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final WorkingWithFile workingWithFile = new WorkingWithFile();
+    private List<JComponent> windows = new ArrayList<>();
 
     public MainApplicationFrame() throws PropertyVetoException {
         //Make the big window be indented 50 pixels from each edge
@@ -31,20 +32,17 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        WorkingWithFile workingWithFile = new WorkingWithFile();
         LogWindow logWindow = createLogWindow();
-        String[] windowInformation = logWindow.recover("log", workingWithFile.readCondition("log"));
-        logWindow.setSize(Integer.parseInt(windowInformation[0]), Integer.parseInt(windowInformation[1]));
-        logWindow.setIcon(Boolean.parseBoolean(windowInformation[2]));
-        logWindow.setLocation(Integer.parseInt(windowInformation[3]), Integer.parseInt(windowInformation[4]));
+        logWindow.setName("log");
+        logWindow = (LogWindow) ConditionOfWindow.recover(workingWithFile.readCondition(logWindow), logWindow);
+        windows.add(logWindow);
         addWindow(logWindow);
 
 
         GameWindow gameWindow = new GameWindow();
-        windowInformation = gameWindow.recover("game", workingWithFile.readCondition("game"));
-        gameWindow.setSize(Integer.parseInt(windowInformation[0]), Integer.parseInt(windowInformation[1]));
-        gameWindow.setIcon(Boolean.parseBoolean(windowInformation[2]));
-        gameWindow.setLocation(Integer.parseInt(windowInformation[3]), Integer.parseInt(windowInformation[4]));
+        gameWindow.setName("game");
+        gameWindow = (GameWindow) ConditionOfWindow.recover(workingWithFile.readCondition(gameWindow), gameWindow);
+        windows.add(gameWindow);
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
@@ -53,9 +51,7 @@ public class MainApplicationFrame extends JFrame
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                workingWithFile.writeCondition(logWindow.save("log", logWindow.isIcon(), logWindow.getX(), logWindow.getY()), true);
-                workingWithFile.writeCondition(gameWindow.save("game", gameWindow.isIcon(), gameWindow.getX(), gameWindow.getY()), false);
-                closeWindow();
+                closeWindow(windows);
             }
         });
     }
@@ -150,7 +146,7 @@ public class MainApplicationFrame extends JFrame
         closeMenu.add(new JMenuItem("Выход")).addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                closeWindow();
+                closeWindow(windows);
             }
         });
 
@@ -180,9 +176,18 @@ public class MainApplicationFrame extends JFrame
     /**
      * Функция для закрытия приложения. Выводится окно подтверждения выхода
      */
-    protected void closeWindow(){
+    protected void closeWindow(List<JComponent> windows){
         int option = JOptionPane.showConfirmDialog(null, "Выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
+            boolean append = false;
+            for (JComponent window: windows){
+                if (append) {
+                    workingWithFile.writeCondition(ConditionOfWindow.save(window), false);
+                } else {
+                    workingWithFile.writeCondition(ConditionOfWindow.save(window), true);
+                    append = true;
+                }
+            }
             this.dispose();
             System.exit(0);
         }

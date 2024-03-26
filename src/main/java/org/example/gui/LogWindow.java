@@ -13,7 +13,7 @@ import org.example.log.LogChangeListener;
 import org.example.log.LogEntry;
 import org.example.log.LogWindowSource;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener, ConditionOfWindow
+public class LogWindow extends JInternalFrame implements LogChangeListener
 {
     private LogWindowSource m_logSource;
     private TextArea m_logContent;
@@ -50,23 +50,4 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Cond
         EventQueue.invokeLater(this::updateLogContent);
     }
 
-    /**
-     * Метод, сохраняющий размеры окна
-     */
-    public Map<String, String> save(String nameOfWindow, Boolean windowMinimized, Integer x, Integer y){
-        Map<String, String> map = new HashMap<>();
-        map.put(nameOfWindow + ".width", Integer.toString(m_logContent.getSize().width));
-        map.put(nameOfWindow + ".height", Integer.toString(m_logContent.getSize().height));
-        map.put(nameOfWindow + ".state", Boolean.toString(windowMinimized));
-        map.put(nameOfWindow + ".x", Integer.toString(x));
-        map.put(nameOfWindow + ".y", Integer.toString(y));
-        return map;
-    };
-
-    /**
-     * Метод, при открытии восстанавливающий размеры окна, которые были при закрытии приложения
-     */
-    public String[] recover(String nameOfWindow, Map<String, String> map){
-        return new String[]{map.get(nameOfWindow + ".width"), map.get(nameOfWindow + ".height"), map.get(nameOfWindow + ".state"), map.get(nameOfWindow + ".x"), map.get(nameOfWindow + ".y")};
-    }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
-public class GameWindow extends JInternalFrame implements ConditionOfWindow
+public class GameWindow extends JInternalFrame
 {
     private final GameVisualizer m_visualizer;
     public GameWindow() 
@@ -22,23 +22,4 @@ public class GameWindow extends JInternalFrame implements ConditionOfWindow
         pack();
     }
 
-    /**
-     * Метод, сохраняющий размеры окна
-     */
-    public Map<String, String> save(String nameOfWindow, Boolean windowMinimized, Integer x, Integer y){
-        Map<String, String> map = new HashMap<>();
-        map.put(nameOfWindow + ".width", Integer.toString(m_visualizer.getSize().width));
-        map.put(nameOfWindow + ".height", Integer.toString(m_visualizer.getSize().height));
-        map.put(nameOfWindow + ".state", Boolean.toString(windowMinimized));
-        map.put(nameOfWindow + ".x", Integer.toString(x));
-        map.put(nameOfWindow + ".y", Integer.toString(y));
-        return map;
-    };
-
-    /**
-     * Метод, при открытии восстанавливающий размеры окна, которые были при закрытии приложения
-     */
-    public String[] recover(String nameOfWindow, Map<String, String> map){
-        return new String[]{map.get(nameOfWindow + ".width"), map.get(nameOfWindow + ".height"), map.get(nameOfWindow + ".state"), map.get(nameOfWindow + ".x"), map.get(nameOfWindow + ".y")};
-    }
 }
