@@ -25,7 +25,6 @@ public final class ConditionOfWindow {
      */
     public static JInternalFrame recover(Map<String, String> map, JInternalFrame window) throws PropertyVetoException {
         String nameOfWindow = window.getName();
-        System.out.println(map+ "*****");
         if (map.get(nameOfWindow + ".width") != null) {
             window.setSize(Integer.parseInt(map.get(nameOfWindow + ".width")), Integer.parseInt(map.get(nameOfWindow + ".height")));
             window.setIcon(Boolean.parseBoolean(map.get(nameOfWindow + ".state")));

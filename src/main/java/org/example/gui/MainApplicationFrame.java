@@ -1,12 +1,12 @@
 package org.example.gui;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -20,6 +20,7 @@ public class MainApplicationFrame extends JFrame
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final WorkingWithFile workingWithFile = new WorkingWithFile();
     private List<JComponent> windows = new ArrayList<>();
+    private GameVisualizer gameVisualizer = new GameVisualizer();
 
     public MainApplicationFrame() throws PropertyVetoException {
         //Make the big window be indented 50 pixels from each edge
@@ -39,7 +40,7 @@ public class MainApplicationFrame extends JFrame
         addWindow(logWindow);
 
 
-        GameWindow gameWindow = new GameWindow();
+        GameWindow gameWindow = new GameWindow(gameVisualizer);
         gameWindow.setName("game");
         gameWindow = (GameWindow) ConditionOfWindow.recover(workingWithFile.readCondition(gameWindow), gameWindow);
         windows.add(gameWindow);
@@ -47,6 +48,14 @@ public class MainApplicationFrame extends JFrame
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+
+        RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(gameVisualizer);
+        robotCoordinatesWindow.setVisible(true);
+        robotCoordinatesWindow.setName("coordinates");
+        robotCoordinatesWindow = (RobotCoordinatesWindow) ConditionOfWindow.recover(workingWithFile.readCondition(robotCoordinatesWindow), robotCoordinatesWindow);
+        windows.add(robotCoordinatesWindow);
+        addWindow(robotCoordinatesWindow);
 
         addWindowListener(new WindowAdapter() {
             @Override
