@@ -20,7 +20,9 @@ public class MainApplicationFrame extends JFrame
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final WorkingWithFile workingWithFile = new WorkingWithFile();
     private List<JComponent> windows = new ArrayList<>();
-    private GameVisualizer gameVisualizer = new GameVisualizer();
+    private GameModel gameModel = new GameModel();
+    private GameVisualizer gameVisualizer = new GameVisualizer(gameModel);
+    private GameController gameController = new GameController(gameModel, gameVisualizer);
 
     public MainApplicationFrame() throws PropertyVetoException {
         //Make the big window be indented 50 pixels from each edge
@@ -50,12 +52,14 @@ public class MainApplicationFrame extends JFrame
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 
-        RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(gameVisualizer);
+        RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow();
         robotCoordinatesWindow.setVisible(true);
         robotCoordinatesWindow.setName("coordinates");
         robotCoordinatesWindow = (RobotCoordinatesWindow) ConditionOfWindow.recover(workingWithFile.readCondition(robotCoordinatesWindow), robotCoordinatesWindow);
         windows.add(robotCoordinatesWindow);
         addWindow(robotCoordinatesWindow);
+
+        gameModel.setPropertyChangeListener(robotCoordinatesWindow);
 
         addWindowListener(new WindowAdapter() {
             @Override
