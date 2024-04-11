@@ -1,10 +1,6 @@
 package org.example.gui;
 
-import org.example.log.LogChangeListener;
-
 import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;

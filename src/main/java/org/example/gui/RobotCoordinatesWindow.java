@@ -2,24 +2,24 @@ package org.example.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class RobotCoordinatesWindow extends JInternalFrame {
+public class RobotCoordinatesWindow extends JInternalFrame implements PropertyChangeListener {
+    private final TextArea textArea;
 
-    public RobotCoordinatesWindow(GameVisualizer gameVisualizer) {
+    public RobotCoordinatesWindow() {
         super("Координаты робота", true, true, true, true);
         setSize(200, 100);
-        TextArea textArea = new TextArea("Координаты робота: (" + "x" + ", " + "y" + ")");
+        textArea = new TextArea("Координаты робота: (" + "x" + ", " + "y" + ")");
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(textArea, BorderLayout.CENTER);
         getContentPane().add(panel);
-
-        gameVisualizer.setPropertyChangeListener(evt -> {
-            if ("position".equals(evt.getPropertyName())) {
-                Point newPosition = (Point) evt.getNewValue();
-                textArea.setText("Координаты робота: (" + newPosition.x + ", " + newPosition.y + ")");
-                textArea.invalidate();
-            }
-        });
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        Point newPosition = (Point) evt.getNewValue();
+        textArea.setText("Координаты робота: (" + newPosition.x + ", " + newPosition.y + ")");
+    }
 }
