@@ -3,6 +3,9 @@ package org.example.gui;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Класс для обновления состояния игры
+ */
 public class GameController {
     private GameModel gameModel;
     private GameVisualizer gameVisualizer;

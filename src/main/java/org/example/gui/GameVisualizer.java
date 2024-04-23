@@ -10,6 +10,9 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JPanel;
 
+/**
+ * Отрисовка игры
+ */
 public class GameVisualizer extends JPanel
 {
     private GameModel gameModel;
