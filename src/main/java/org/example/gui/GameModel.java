@@ -4,6 +4,10 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+
+/**
+ * Логика игры
+ */
 public class GameModel {
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100;
