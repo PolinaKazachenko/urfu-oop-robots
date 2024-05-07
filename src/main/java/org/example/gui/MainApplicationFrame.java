@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.*;
 
@@ -23,6 +25,19 @@ public class MainApplicationFrame extends JFrame
     private GameModel gameModel = new GameModel();
     private GameVisualizer gameVisualizer = new GameVisualizer(gameModel);
     private GameController gameController = new GameController(gameModel, gameVisualizer);
+    protected static ResourceBundle resourceBundle;
+
+    private JMenu lookAndFeelMenu;
+    private JMenu testMenu;
+    private JMenu closeMenu;
+    private JMenu languageMenu;
+    private JMenuItem systemLookAndFeel;
+    private JMenuItem crossplatformLookAndFeel;
+    private JMenuItem addLogMessageItem;
+    private JMenuItem exit;
+    private LogWindow logWindow;
+    private GameWindow gameWindow;
+    private RobotCoordinatesWindow robotCoordinatesWindow;
 
     public MainApplicationFrame() throws PropertyVetoException {
         //Make the big window be indented 50 pixels from each edge
@@ -35,14 +50,14 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        LogWindow logWindow = createLogWindow();
+        logWindow = createLogWindow();
         logWindow.setName("log");
         logWindow = (LogWindow) ConditionOfWindow.recover(workingWithFile.readCondition(logWindow), logWindow);
         windows.add(logWindow);
         addWindow(logWindow);
 
 
-        GameWindow gameWindow = new GameWindow(gameVisualizer);
+        gameWindow = new GameWindow(gameVisualizer);
         gameWindow.setName("game");
         gameWindow = (GameWindow) ConditionOfWindow.recover(workingWithFile.readCondition(gameWindow), gameWindow);
         windows.add(gameWindow);
@@ -51,8 +66,7 @@ public class MainApplicationFrame extends JFrame
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-
-        RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow();
+        robotCoordinatesWindow = new RobotCoordinatesWindow();
         robotCoordinatesWindow.setVisible(true);
         robotCoordinatesWindow.setName("coordinates");
         robotCoordinatesWindow = (RobotCoordinatesWindow) ConditionOfWindow.recover(workingWithFile.readCondition(robotCoordinatesWindow), robotCoordinatesWindow);
@@ -119,13 +133,13 @@ public class MainApplicationFrame extends JFrame
     {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+        lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
                 "Управление режимом отображения приложения");
 
         {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+            systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
             systemLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 this.invalidate();
@@ -134,7 +148,7 @@ public class MainApplicationFrame extends JFrame
         }
 
         {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
+            crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
             crossplatformLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 this.invalidate();
@@ -142,31 +156,42 @@ public class MainApplicationFrame extends JFrame
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
 
-        JMenu testMenu = new JMenu("Тесты");
+        testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
 
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+            addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
             addLogMessageItem.addActionListener((event) -> {
                 Logger.debug("Новая строка");
             });
             testMenu.add(addLogMessageItem);
         }
 
-        JMenu closeMenu = new JMenu("Меню");
-        closeMenu.add(new JMenuItem("Выход")).addActionListener(new ActionListener() {
+        closeMenu = new JMenu("Меню");
+        exit = new JMenuItem("Выход");
+        closeMenu.add(exit).addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 closeWindow(windows);
             }
         });
 
+        languageMenu = new JMenu("Язык");
+        languageMenu.add(new JMenuItem("Русский")).addActionListener(e -> {
+            resourceBundle = ResourceBundle.getBundle("text", new Locale("ru"));
+            translator();
+        });
+        languageMenu.add(new JMenuItem("Rysskiy")).addActionListener(e -> {
+            resourceBundle = ResourceBundle.getBundle("text", new Locale("en"));
+            translator();
+        });
 
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
         menuBar.add(closeMenu);
+        menuBar.add(languageMenu);
 
         return menuBar;
     }
@@ -190,7 +215,7 @@ public class MainApplicationFrame extends JFrame
      * Функция для закрытия приложения. Выводится окно подтверждения выхода
      */
     protected void closeWindow(List<JComponent> windows){
-        int option = JOptionPane.showConfirmDialog(null, "Выйти?", "Выход", JOptionPane.YES_NO_OPTION);
+        int option = JOptionPane.showConfirmDialog(null, resourceBundle.getString("exitOrNot"), resourceBundle.getString("exit"), JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
             boolean append = false;
             for (JComponent window: windows){
@@ -204,5 +229,19 @@ public class MainApplicationFrame extends JFrame
             this.dispose();
             System.exit(0);
         }
+    }
+
+    private void translator(){
+        lookAndFeelMenu.setText(resourceBundle.getString("lookAndFeelMenu"));
+        testMenu.setText(resourceBundle.getString("testMenu"));
+        closeMenu.setText(resourceBundle.getString("closeMenu"));
+        languageMenu.setText(resourceBundle.getString("languageMenu"));
+        systemLookAndFeel.setText(resourceBundle.getString("systemLookAndFeel"));
+        crossplatformLookAndFeel.setText(resourceBundle.getString("crossplatformLookAndFeel"));
+        addLogMessageItem.setText(resourceBundle.getString("addLogMessageItem"));
+        exit.setText(resourceBundle.getString("exit"));
+        logWindow.translate();
+        gameWindow.translate();
+        robotCoordinatesWindow.translate();
     }
 }
