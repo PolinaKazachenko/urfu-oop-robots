@@ -90,7 +90,7 @@ public class MainApplicationFrame extends JFrame
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug("");
         return logWindow;
     }
 
@@ -231,6 +231,9 @@ public class MainApplicationFrame extends JFrame
         }
     }
 
+    /**
+     * Переводит названия и весь текст с русского на транслит и наоборот
+     */
     private void translator(){
         lookAndFeelMenu.setText(resourceBundle.getString("lookAndFeelMenu"));
         testMenu.setText(resourceBundle.getString("testMenu"));

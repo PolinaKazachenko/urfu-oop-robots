@@ -29,6 +29,9 @@ public class RobotCoordinatesWindow extends JInternalFrame implements PropertyCh
         textArea.setText(getTitle() + ": (" + newPosition.x + ", " + newPosition.y + ")");
     }
 
+    /**
+     * Переводит название окна с русского на транслит и наоборот
+     */
     public void translate(){
         setTitle(resourceBundle.getString("robotCoordinatesWindow"));
         textArea.setText(getTitle() + ": (" + x + ", " + y + ")");
