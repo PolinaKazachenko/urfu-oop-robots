@@ -18,6 +18,9 @@ public class GameWindow extends JInternalFrame
         pack();
     }
 
+    /**
+     * Переводит название окна с русского на транслит и наоборот
+     */
     public void translate(){
         setTitle(resourceBundle.getString("gameWindow"));
     }

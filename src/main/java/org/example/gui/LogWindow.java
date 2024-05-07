@@ -52,6 +52,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
         EventQueue.invokeLater(this::updateLogContent);
     }
 
+    /**
+     * Переводит название окна с русского на транслит и наоборот
+     */
     public void translate(){
         setTitle(resourceBundle.getString("logWindow"));
     }
