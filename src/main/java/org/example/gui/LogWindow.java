@@ -13,6 +13,8 @@ import org.example.log.LogChangeListener;
 import org.example.log.LogEntry;
 import org.example.log.LogWindowSource;
 
+import static org.example.gui.MainApplicationFrame.resourceBundle;
+
 public class LogWindow extends JInternalFrame implements LogChangeListener
 {
     private LogWindowSource m_logSource;
@@ -48,6 +50,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
     public void onLogChanged()
     {
         EventQueue.invokeLater(this::updateLogContent);
+    }
+
+    public void translate(){
+        setTitle(resourceBundle.getString("logWindow"));
     }
 
 }

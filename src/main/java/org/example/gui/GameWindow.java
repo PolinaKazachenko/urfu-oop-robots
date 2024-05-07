@@ -5,6 +5,8 @@ import java.awt.BorderLayout;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
+import static org.example.gui.MainApplicationFrame.resourceBundle;
+
 public class GameWindow extends JInternalFrame
 {
     public GameWindow(GameVisualizer m_visualizer)
@@ -14,6 +16,10 @@ public class GameWindow extends JInternalFrame
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
         pack();
+    }
+
+    public void translate(){
+        setTitle(resourceBundle.getString("gameWindow"));
     }
 
 }
