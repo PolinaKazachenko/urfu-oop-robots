@@ -38,8 +38,10 @@ public class MainApplicationFrame extends JFrame
     private LogWindow logWindow;
     private GameWindow gameWindow;
     private RobotCoordinatesWindow robotCoordinatesWindow;
+    private RobotDownloader robotDownloader;
 
     public MainApplicationFrame() throws PropertyVetoException {
+        robotDownloader = new RobotDownloader();
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
         int inset = 50;
